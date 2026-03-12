@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --accent: #429872;
+  --dark-accent: #143f39;
+  --muted: #999999;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-dark-accent: var(--dark-accent);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+}
+
+.mainContainer {
+  @apply max-w-[1600px] w-full mx-auto px-4 md:px-6 lg:px-12;
+}
+
+.hero-gradient {
+  background: radial-gradient(
+    circle at center,
+    var(--dark-accent),
+    transparent,
+    transparent
+  );
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
