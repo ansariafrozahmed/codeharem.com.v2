@@ -20,7 +20,7 @@ const HomeHero = () => {
     <>
       <div className="flex flex-col-reverse lg:flex-row items-center bg-[radial-gradient(circle_at_center,var(--dark-accent),transparent,transparent)] gap-5 lg:gap-10  mainContainer lg:bg-none py-6 md:py-8 lg:py-10 text-white">
         <div className="w-full space-y-6 lg:space-y-10 lg:w-[53%] py-0 lg:py-16">
-          <h1 className="text-[2.3rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.2rem] leading-[1.1] lg:leading-[1.1] font-medium -tracking-[0.015em] text-white">
+          <h1 className="text-[2.3rem] sm:text-[3.5rem] md:text-[4rem] lg:text-[4.2rem] leading-[1.1] lg:leading-[1.1] font-semibold -tracking-[0.015em] text-white">
             The{" "}
             <span
               className={`transition-colors duration-300 ${

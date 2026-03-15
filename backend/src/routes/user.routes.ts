@@ -7,7 +7,7 @@ import {
 } from "../controllers/user.controller";
 import { authenticate } from "../middlewares/auth";
 
-const router = Router();
+const router: Router = Router();
 
 // All routes are protected
 router.use(authenticate);

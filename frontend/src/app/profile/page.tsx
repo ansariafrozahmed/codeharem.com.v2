@@ -8,7 +8,7 @@ import {
   apiChangePassword,
   apiSendVerification,
   apiVerifyEmail,
-} from "@/lib/api";
+} from "@/lib/services/user.service";
 
 export default function ProfilePage() {
   const { user, loading, refreshUser } = useAuth();

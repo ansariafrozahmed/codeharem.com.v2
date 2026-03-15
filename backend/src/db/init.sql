@@ -4,3 +4,4 @@
 
 \i src/db/migrations/000_init.sql
 \i src/db/migrations/001_email_verification.sql
+\i src/db/migrations/002_components.sql

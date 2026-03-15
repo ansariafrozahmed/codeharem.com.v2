@@ -12,7 +12,7 @@ import {
 } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth";
 
-const router = Router();
+const router: Router = Router();
 
 // Email/Password
 router.post("/register", register);

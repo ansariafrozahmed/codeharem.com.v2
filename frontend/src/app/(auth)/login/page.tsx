@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { getGoogleOAuthUrl, getGitHubOAuthUrl } from "@/lib/api";
+import { getGoogleOAuthUrl, getGitHubOAuthUrl } from "@/lib/services/auth.service";
 import Image from "next/image";
 
 function OAuthError({ onError }: { onError: (msg: string) => void }) {
@@ -25,22 +25,9 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasMinLength = password.length >= 8;
-  const isPasswordValid =
-    hasUppercase && hasLowercase && hasNumber && hasMinLength;
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-
-    if (!isPasswordValid) {
-      setError("Password does not meet the requirements");
-      return;
-    }
-
     setSubmitting(true);
 
     try {
@@ -169,38 +156,6 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-              {password && (
-                <ul className="mt-2 space-y-1 text-xs">
-                  <li
-                    className={
-                      hasMinLength ? "text-green-400" : "text-gray-500"
-                    }
-                  >
-                    {hasMinLength ? "\u2713" : "\u2022"} At least 8 characters
-                  </li>
-                  <li
-                    className={
-                      hasUppercase ? "text-green-400" : "text-gray-500"
-                    }
-                  >
-                    {hasUppercase ? "\u2713" : "\u2022"} At least one uppercase
-                    letter
-                  </li>
-                  <li
-                    className={
-                      hasLowercase ? "text-green-400" : "text-gray-500"
-                    }
-                  >
-                    {hasLowercase ? "\u2713" : "\u2022"} At least one lowercase
-                    letter
-                  </li>
-                  <li
-                    className={hasNumber ? "text-green-400" : "text-gray-500"}
-                  >
-                    {hasNumber ? "\u2713" : "\u2022"} At least one number
-                  </li>
-                </ul>
-              )}
             </div>
 
             <button

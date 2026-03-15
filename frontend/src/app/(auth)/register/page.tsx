@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { getGoogleOAuthUrl, getGitHubOAuthUrl } from "@/lib/api";
+import { getGoogleOAuthUrl, getGitHubOAuthUrl } from "@/lib/services/auth.service";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");

@@ -8,14 +8,14 @@ import {
   useCallback,
 } from "react";
 import { User } from "@/types";
+import { setAccessToken } from "@/lib/api";
 import {
-  setAccessToken,
   apiGetMe,
   apiRefreshToken,
   apiLogout,
   apiLogin,
   apiRegister,
-} from "@/lib/api";
+} from "@/lib/services/auth.service";
 
 interface AuthContextType {
   user: User | null;
@@ -53,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         // Not logged in
       } finally {
+        console.log("Not logged in");
         setLoading(false);
       }
     }
@@ -87,7 +88,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, setTokenAndFetchUser, refreshUser: fetchUser }}
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        setTokenAndFetchUser,
+        refreshUser: fetchUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
