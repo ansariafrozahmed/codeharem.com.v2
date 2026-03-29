@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getPublicProfile,
   updateProfile,
   changePassword,
   sendVerificationCode,
@@ -9,12 +10,13 @@ import { authenticate } from "../middlewares/auth";
 
 const router: Router = Router();
 
-// All routes are protected
-router.use(authenticate);
+// Public route
+router.get("/profile/:username", getPublicProfile);
 
-router.patch("/profile", updateProfile);
-router.post("/change-password", changePassword);
-router.post("/send-verification", sendVerificationCode);
-router.post("/verify-email", verifyEmail);
+// Protected routes
+router.patch("/profile", authenticate, updateProfile);
+router.post("/change-password", authenticate, changePassword);
+router.post("/send-verification", authenticate, sendVerificationCode);
+router.post("/verify-email", authenticate, verifyEmail);
 
 export default router;

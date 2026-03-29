@@ -1,10 +1,25 @@
 import { request } from "../api";
+import type { ComponentData } from "./component.service";
 
-export async function apiUpdateProfile(data: { name?: string }) {
+export interface PublicProfile {
+  id: string;
+  name: string | null;
+  username: string;
+  avatar: string | null;
+  created_at: string;
+  components: ComponentData[];
+}
+
+export async function apiGetPublicProfile(username: string) {
+  return request<PublicProfile>(`/user/profile/${username}`);
+}
+
+export async function apiUpdateProfile(data: { name?: string; username?: string }) {
   return request<{
     id: string;
     email: string;
     name: string | null;
+    username: string | null;
     avatar: string | null;
     provider: "EMAIL" | "GOOGLE" | "GITHUB";
     is_verified: boolean;

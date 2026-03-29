@@ -8,7 +8,18 @@ function generateCode(): string {
 }
 
 export class UserService {
-  async updateProfile(userId: string, data: { name?: string }) {
+  async getPublicProfile(username: string) {
+    const result = await pool.query(
+      "SELECT id, name, username, avatar, created_at FROM users WHERE username = $1",
+      [username]
+    );
+    if (result.rows.length === 0) {
+      throw new AppError(404, "User not found");
+    }
+    return result.rows[0];
+  }
+
+  async updateProfile(userId: string, data: { name?: string; username?: string }) {
     const fields: string[] = [];
     const values: any[] = [];
     let idx = 1;
@@ -16,6 +27,23 @@ export class UserService {
     if (data.name !== undefined) {
       fields.push(`name = $${idx++}`);
       values.push(data.name);
+    }
+
+    if (data.username !== undefined) {
+      // Validate username format
+      if (!/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/.test(data.username)) {
+        throw new AppError(400, "Username must be 3-30 chars, lowercase letters, numbers, and hyphens only");
+      }
+      // Check uniqueness
+      const existing = await pool.query(
+        "SELECT id FROM users WHERE username = $1 AND id != $2",
+        [data.username, userId]
+      );
+      if (existing.rows.length > 0) {
+        throw new AppError(409, "Username already taken");
+      }
+      fields.push(`username = $${idx++}`);
+      values.push(data.username);
     }
 
     if (fields.length === 0) {
@@ -26,7 +54,7 @@ export class UserService {
     values.push(userId);
 
     const result = await pool.query(
-      `UPDATE users SET ${fields.join(", ")} WHERE id = $${idx} RETURNING id, email, name, avatar, provider, is_verified, created_at`,
+      `UPDATE users SET ${fields.join(", ")} WHERE id = $${idx} RETURNING id, email, name, username, avatar, provider, is_verified, created_at`,
       values
     );
 

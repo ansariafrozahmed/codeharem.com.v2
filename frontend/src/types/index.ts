@@ -21,6 +21,7 @@ export interface User {
   id: string;
   email: string;
   name: string | null;
+  username: string | null;
   avatar: string | null;
   provider: "EMAIL" | "GOOGLE" | "GITHUB";
   is_verified: boolean;

@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 
 interface PreviewProps {
   htmlCode: string;
@@ -73,7 +79,15 @@ const Preview = forwardRef<PreviewHandle, PreviewProps>(function Preview(
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   function buildCurrent() {
-    return buildDocument(htmlCode, cssCode, jsCode, styling, externalCss, externalJs, headContent);
+    return buildDocument(
+      htmlCode,
+      cssCode,
+      jsCode,
+      styling,
+      externalCss,
+      externalJs,
+      headContent,
+    );
   }
 
   useImperativeHandle(ref, () => ({
@@ -92,8 +106,16 @@ const Preview = forwardRef<PreviewHandle, PreviewProps>(function Preview(
       setSrcdoc(buildCurrent());
     }, 400);
     return () => clearTimeout(timerRef.current);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [htmlCode, cssCode, jsCode, styling, externalCss, externalJs, headContent]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    htmlCode,
+    cssCode,
+    jsCode,
+    styling,
+    externalCss,
+    externalJs,
+    headContent,
+  ]);
 
   return (
     <iframe

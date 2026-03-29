@@ -28,6 +28,24 @@ interface OAuthInput {
 }
 
 export class AuthService {
+  private async generateUniqueUsername(name: string | null, email: string): Promise<string> {
+    const base = (name || email.split("@")[0])
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w-]/g, "")
+      .replace(/\s+/g, "-")
+      .slice(0, 30);
+    let username = base;
+    let suffix = 0;
+
+    while (true) {
+      const existing = await pool.query("SELECT 1 FROM users WHERE username = $1", [username]);
+      if (existing.rows.length === 0) return username;
+      suffix++;
+      username = `${base}-${suffix}`;
+    }
+  }
+
   async register(input: RegisterInput): Promise<AuthTokens> {
     const existing = await pool.query("SELECT id FROM users WHERE email = $1", [input.email]);
     if (existing.rows.length > 0) {
@@ -35,9 +53,10 @@ export class AuthService {
     }
 
     const hashedPassword = await hashPassword(input.password);
+    const username = await this.generateUniqueUsername(input.name, input.email);
     const result = await pool.query(
-      "INSERT INTO users (email, name, password, provider) VALUES ($1, $2, $3, 'EMAIL') RETURNING id",
-      [input.email, input.name, hashedPassword]
+      "INSERT INTO users (email, name, password, provider, username) VALUES ($1, $2, $3, 'EMAIL', $4) RETURNING id",
+      [input.email, input.name, hashedPassword, username]
     );
 
     return this.generateTokens(result.rows[0].id);
@@ -74,9 +93,10 @@ export class AuthService {
         );
       }
     } else {
+      const username = await this.generateUniqueUsername(input.name, input.email);
       const insertResult = await pool.query(
-        "INSERT INTO users (email, name, avatar, provider, provider_id, is_verified) VALUES ($1, $2, $3, $4, $5, true) RETURNING id",
-        [input.email, input.name, input.avatar, input.provider, input.providerId]
+        "INSERT INTO users (email, name, avatar, provider, provider_id, is_verified, username) VALUES ($1, $2, $3, $4, $5, true, $6) RETURNING id",
+        [input.email, input.name, input.avatar, input.provider, input.providerId, username]
       );
       userId = insertResult.rows[0].id;
     }
@@ -109,7 +129,7 @@ export class AuthService {
 
   async getMe(userId: string) {
     const result = await pool.query(
-      "SELECT id, email, name, avatar, provider, is_verified, created_at FROM users WHERE id = $1",
+      "SELECT id, email, name, username, avatar, provider, is_verified, created_at FROM users WHERE id = $1",
       [userId]
     );
     const user = result.rows[0];

@@ -1,10 +1,12 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { userService } from "../services/user.service";
+import { componentService } from "../services/component.service";
 import { AuthRequest } from "../types";
 
 const updateProfileSchema = z.object({
   name: z.string().min(1, "Name cannot be empty").optional(),
+  username: z.string().min(3).max(30).optional(),
 });
 
 const changePasswordSchema = z.object({
@@ -15,6 +17,20 @@ const changePasswordSchema = z.object({
 const verifyCodeSchema = z.object({
   code: z.string().length(6, "Code must be 6 digits"),
 });
+
+export async function getPublicProfile(req: Request, res: Response, next: NextFunction) {
+  try {
+    const username = req.params.username as string;
+    const profile = await userService.getPublicProfile(username);
+
+    // Get user's published components
+    const components = await componentService.listByUser(profile.id, "published");
+
+    res.json({ ...profile, components });
+  } catch (err) {
+    next(err);
+  }
+}
 
 export async function updateProfile(req: AuthRequest, res: Response, next: NextFunction) {
   try {

@@ -103,3 +103,35 @@ export async function incrementViews(req: Request, res: Response, next: NextFunc
     next(err);
   }
 }
+
+export async function toggleLike(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const result = await componentService.toggleLike(req.params.slug as string, req.userId!);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function checkLiked(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const liked = await componentService.hasLiked(req.params.slug as string, req.userId!);
+    res.json({ liked });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function checkLikedBatch(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const slugs = req.body.slugs as string[];
+    if (!Array.isArray(slugs)) {
+      res.status(400).json({ message: "slugs must be an array" });
+      return;
+    }
+    const likedSlugs = await componentService.getLikedSlugs(req.userId!, slugs);
+    res.json({ likedSlugs });
+  } catch (err) {
+    next(err);
+  }
+}

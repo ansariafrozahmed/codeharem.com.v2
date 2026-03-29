@@ -143,7 +143,10 @@ export default function Header() {
                 >
                   {user.avatar ? (
                     <img
-                      src={user.avatar}
+                      src={
+                        user.avatar ||
+                        "https://api.dicebear.com/9.x/initials/svg"
+                      }
                       alt={user.name || ""}
                       className="h-8 w-8 rounded-full"
                     />
@@ -188,28 +191,34 @@ export default function Header() {
                   </div>
 
                   <div className="py-1.5">
-                    {PROFILE_DROPDOWN_LINKS.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-[#2a2a2a] hover:text-white"
-                      >
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={1.5}
+                    {PROFILE_DROPDOWN_LINKS.map((item) => {
+                      const href =
+                        item.label === "Profile" && user.username
+                          ? `/profile/${user.username}`
+                          : item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={href}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-[#2a2a2a] hover:text-white"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={item.iconPath}
-                          />
-                        </svg>
-                        {item.label}
-                      </Link>
-                    ))}
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={1.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d={item.iconPath}
+                            />
+                          </svg>
+                          {item.label}
+                        </Link>
+                      );
+                    })}
                   </div>
 
                   <div className="border-t border-[#333] py-1.5">
@@ -295,28 +304,34 @@ export default function Header() {
                   </div>
 
                   <div className="py-1.5">
-                    {PROFILE_DROPDOWN_LINKS.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-[#2a2a2a] hover:text-white"
-                      >
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={1.5}
+                    {PROFILE_DROPDOWN_LINKS.map((item) => {
+                      const href =
+                        item.label === "Profile" && user.username
+                          ? `/profile/${user.username}`
+                          : item.href;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={href}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-[#2a2a2a] hover:text-white"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d={item.iconPath}
-                          />
-                        </svg>
-                        {item.label}
-                      </Link>
-                    ))}
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={1.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d={item.iconPath}
+                            />
+                          </svg>
+                          {item.label}
+                        </Link>
+                      );
+                    })}
                   </div>
 
                   <div className="border-t border-[#333] py-1.5">

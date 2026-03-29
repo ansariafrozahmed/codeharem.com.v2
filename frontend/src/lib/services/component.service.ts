@@ -102,3 +102,20 @@ export async function apiIncrementViews(slug: string) {
     method: "POST",
   });
 }
+
+export async function apiToggleLike(slug: string) {
+  return request<{ liked: boolean; likes: number }>(`/components/${slug}/like`, {
+    method: "POST",
+  });
+}
+
+export async function apiCheckLiked(slug: string) {
+  return request<{ liked: boolean }>(`/components/${slug}/liked`);
+}
+
+export async function apiCheckLikedBatch(slugs: string[]) {
+  return request<{ likedSlugs: string[] }>("/components/liked-batch", {
+    method: "POST",
+    body: JSON.stringify({ slugs }),
+  });
+}

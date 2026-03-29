@@ -251,6 +251,64 @@ class ComponentService {
       [slug]
     );
   }
+
+  async toggleLike(slug: string, userId: string): Promise<{ liked: boolean; likes: number }> {
+    const comp = await pool.query("SELECT id, likes FROM components WHERE slug = $1", [slug]);
+    if (comp.rows.length === 0) {
+      throw new AppError(404, "Component not found");
+    }
+    const componentId = comp.rows[0].id;
+
+    const existing = await pool.query(
+      "SELECT 1 FROM component_likes WHERE user_id = $1 AND component_id = $2",
+      [userId, componentId]
+    );
+
+    if (existing.rows.length > 0) {
+      await pool.query(
+        "DELETE FROM component_likes WHERE user_id = $1 AND component_id = $2",
+        [userId, componentId]
+      );
+      await pool.query(
+        "UPDATE components SET likes = GREATEST(likes - 1, 0) WHERE id = $1",
+        [componentId]
+      );
+      const updated = await pool.query("SELECT likes FROM components WHERE id = $1", [componentId]);
+      return { liked: false, likes: updated.rows[0].likes };
+    } else {
+      await pool.query(
+        "INSERT INTO component_likes (user_id, component_id) VALUES ($1, $2)",
+        [userId, componentId]
+      );
+      await pool.query(
+        "UPDATE components SET likes = likes + 1 WHERE id = $1",
+        [componentId]
+      );
+      const updated = await pool.query("SELECT likes FROM components WHERE id = $1", [componentId]);
+      return { liked: true, likes: updated.rows[0].likes };
+    }
+  }
+
+  async hasLiked(slug: string, userId: string): Promise<boolean> {
+    const comp = await pool.query("SELECT id FROM components WHERE slug = $1", [slug]);
+    if (comp.rows.length === 0) return false;
+    const result = await pool.query(
+      "SELECT 1 FROM component_likes WHERE user_id = $1 AND component_id = $2",
+      [userId, comp.rows[0].id]
+    );
+    return result.rows.length > 0;
+  }
+
+  async getLikedSlugs(userId: string, slugs: string[]): Promise<string[]> {
+    if (slugs.length === 0) return [];
+    const result = await pool.query(
+      `SELECT c.slug FROM component_likes cl
+       JOIN components c ON c.id = cl.component_id
+       WHERE cl.user_id = $1 AND c.slug = ANY($2)`,
+      [userId, slugs]
+    );
+    return result.rows.map((r: { slug: string }) => r.slug);
+  }
 }
 
 export const componentService = new ComponentService();
