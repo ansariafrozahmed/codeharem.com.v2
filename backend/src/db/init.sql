@@ -7,3 +7,4 @@
 \i src/db/migrations/002_components.sql
 \i src/db/migrations/003_username.sql
 \i src/db/migrations/004_component_likes.sql
+\i src/db/migrations/005_blogs.sql
