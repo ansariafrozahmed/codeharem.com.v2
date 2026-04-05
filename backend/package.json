@@ -6,8 +6,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "db:init": "psql -U postgres -d codeharemdb -f src/db/init.sql",
-    "db:migrate": "psql -U postgres -d codeharemdb -f"
+    "db:init": "psql -U postgres -d codeharem -f src/db/init.sql",
+    "db:migrate": "psql -U postgres -d codeharem -f"
   },
   "keywords": [],
   "author": "",
