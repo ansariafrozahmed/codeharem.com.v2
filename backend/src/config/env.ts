@@ -5,6 +5,7 @@ export const env = {
   PORT: parseInt(process.env.PORT || "8000"),
   NODE_ENV: process.env.NODE_ENV || "development",
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+  ADMIN_URL: process.env.ADMIN_URL || "http://localhost:3001",
 
   // Database
   DATABASE_URL: process.env.DATABASE_URL || "",

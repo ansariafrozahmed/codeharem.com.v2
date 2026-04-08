@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import type { BlogData } from "@/lib/services/blog.service";
 import BlogHeroCard from "@/components/blog/BlogHeroCard";
 import BlogCard from "@/components/blog/BlogCard";
+import { buildMetadata, pagesSeo } from "@/config/seo";
 
-export const metadata: Metadata = {
-  title: "Blog - CodeHarem",
-  description:
-    "Read articles about web development, UI design, CSS tricks, and more from the CodeHarem community.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: pagesSeo.blog.title,
+  description: pagesSeo.blog.description,
+  path: "/blog",
+});
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 

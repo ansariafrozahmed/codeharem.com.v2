@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { ComponentData } from "@/lib/services/component.service";
 import ComponentDetailClient from "./ComponentDetailClient";
+import { buildMetadata, getComponentJsonLd } from "@/config/seo";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
@@ -27,15 +28,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const component = await fetchComponent(slug);
   if (!component) return { title: "Component Not Found" };
 
-  return {
+  return buildMetadata({
     title: `${component.title} - CodeHarem`,
     description: `A ${component.category} component built with ${component.styling === "tailwind" ? "Tailwind CSS" : "CSS"} by ${component.author?.name || "Anonymous"}`,
-    openGraph: {
-      title: component.title,
-      description: `A ${component.category} component on CodeHarem`,
-      type: "article",
-    },
-  };
+    path: `/component/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function ComponentDetailPage({ params }: PageProps) {
@@ -47,8 +45,21 @@ export default async function ComponentDetailPage({ params }: PageProps) {
   // Increment views (fire and forget)
   fetch(`${API_URL}/components/${slug}/views`, { method: "POST" }).catch(() => {});
 
+  const jsonLd = getComponentJsonLd({
+    title: component.title,
+    slug,
+    category: component.category,
+    styling: component.styling,
+    createdAt: component.createdAt,
+    author: component.author,
+  });
+
   return (
     <div className="mainContainer py-8 md:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-gray-500">
         <Link href="/component" className="hover:text-white transition-colors">

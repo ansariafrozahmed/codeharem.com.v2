@@ -1,14 +1,15 @@
 import type { MetadataRoute } from "next";
+import { siteConfig, robotsConfig } from "@/config/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/profile", "/settings", "/my-components", "/auth/"],
+        allow: [...robotsConfig.allowPaths],
+        disallow: [...robotsConfig.disallowPaths],
       },
     ],
-    sitemap: "https://codeharem.com/sitemap.xml",
+    sitemap: `${siteConfig.url}/sitemap.xml`,
   };
 }

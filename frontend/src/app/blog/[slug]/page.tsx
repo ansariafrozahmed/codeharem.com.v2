@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { BlogData } from "@/lib/services/blog.service";
 import BlogContent from "./BlogContent";
+import { buildMetadata, getBlogPostJsonLd } from "@/config/seo";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
@@ -29,16 +30,19 @@ export async function generateMetadata({
   const blog = await fetchBlog(slug);
   if (!blog) return { title: "Blog Post Not Found" };
 
-  return {
+  return buildMetadata({
     title: `${blog.title} - CodeHarem Blog`,
     description: blog.excerpt || `Read "${blog.title}" on CodeHarem Blog`,
-    openGraph: {
-      title: blog.title,
-      description: blog.excerpt,
-      type: "article",
-      ...(blog.featuredImage ? { images: [blog.featuredImage] } : {}),
+    path: `/blog/${slug}`,
+    ogType: "article",
+    ...(blog.featuredImage ? { ogImage: blog.featuredImage } : {}),
+    article: {
+      publishedTime: blog.createdAt,
+      modifiedTime: blog.updatedAt || blog.createdAt,
+      author: blog.author?.name,
+      tags: blog.tags,
     },
-  };
+  });
 }
 
 export default async function BlogDetailPage({ params }: PageProps) {
@@ -50,8 +54,23 @@ export default async function BlogDetailPage({ params }: PageProps) {
   // Increment views (fire and forget)
   fetch(`${API_URL}/blogs/${slug}/views`, { method: "POST" }).catch(() => {});
 
+  const jsonLd = getBlogPostJsonLd({
+    title: blog.title,
+    excerpt: blog.excerpt,
+    slug,
+    featuredImage: blog.featuredImage,
+    createdAt: blog.createdAt,
+    updatedAt: blog.updatedAt,
+    author: blog.author,
+    tags: blog.tags,
+  });
+
   return (
     <div className="mainContainer py-8 md:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="mb-8 flex items-center gap-2 text-sm text-gray-500">
         <Link

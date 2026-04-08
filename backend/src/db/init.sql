@@ -8,3 +8,4 @@
 \i src/db/migrations/003_username.sql
 \i src/db/migrations/004_component_likes.sql
 \i src/db/migrations/005_blogs.sql
+\i src/db/migrations/006_admins.sql

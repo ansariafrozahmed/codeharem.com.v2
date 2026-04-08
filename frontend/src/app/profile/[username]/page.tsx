@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ComponentData } from "@/lib/services/component.service";
 import ProfileActions from "./ProfileActions";
 import ProfileComponentGrid from "./ProfileComponentGrid";
+import { buildMetadata, getProfileJsonLd } from "@/config/seo";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
@@ -36,10 +37,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const profile = await fetchProfile(username);
   if (!profile) return { title: "User Not Found" };
 
-  return {
-    title: `${profile.name || profile.username} - CodeHarem`,
-    description: `View ${profile.name || profile.username}'s components on CodeHarem`,
-  };
+  const displayName = profile.name || profile.username;
+  return buildMetadata({
+    title: `${displayName} - CodeHarem`,
+    description: `View ${displayName}'s components on CodeHarem. Browse their collection of UI components.`,
+    path: `/profile/${username}`,
+    ogType: "profile",
+  });
 }
 
 export default async function ProfilePage({ params }: PageProps) {
@@ -53,8 +57,19 @@ export default async function ProfilePage({ params }: PageProps) {
     year: "numeric",
   });
 
+  const jsonLd = getProfileJsonLd({
+    name: profile.name || profile.username,
+    username: profile.username,
+    avatar: profile.avatar,
+    componentCount: profile.components.length,
+  });
+
   return (
     <div className="mainContainer py-10 md:py-14">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Profile Header */}
       <div className="mb-10 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
         {profile.avatar ? (

@@ -8,7 +8,7 @@ import routes from "./routes";
 const app: express.Application = express();
 
 // Middleware
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: [env.CLIENT_URL, env.ADMIN_URL], credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 

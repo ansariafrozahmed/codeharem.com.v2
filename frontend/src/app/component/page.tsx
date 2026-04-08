@@ -1,8 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { CATEGORIES } from "@/constants";
 import type { ComponentData } from "@/lib/services/component.service";
 import SearchBar from "./SearchBar";
 import ComponentGrid from "./ComponentGrid";
+import { buildMetadata, pagesSeo } from "@/config/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: pagesSeo.components.title,
+  description: pagesSeo.components.description,
+  path: "/component",
+});
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
